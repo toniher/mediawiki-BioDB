@@ -1,0 +1,27 @@
+{
+	"name": "mediawiki/bio-db",
+	"type": "mediawiki-extension",
+	"description": "Retrieve information from an existing Biological Database",
+	"keywords": [
+		"MediaWiki",
+		"SMW",
+		"Semantic MediaWiki",
+		"Database"
+	],
+	"homepage": "",
+	"license": "GPL-2.0+",
+	"authors": [
+		{
+			"name": "Toni Hermoso Pulido",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"composer/installers": "1.*,>=1.0.1",
+		"mediawiki/semantic-media-wiki": ">=2.0"
+	},
+	"autoload": {
+		"classmap": ["BioDB_body.php"]
+	}
+}
