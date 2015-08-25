@@ -8,7 +8,7 @@ class BioDB {
 			
 		global $wgBioDB;
 		global $wgBioDBExpose; // Take the configuration
-		global $BioDBValues; // What we do store
+		global $wgBioDBValues; // What we do store
 
 		$db = DatabaseBase::factory( $wgBioDB["type"],
 			array(
@@ -40,8 +40,8 @@ class BioDB {
 
 					$query = self::process_query( $query, $vars );
 					
-					self::query_store_DB( $db, $query, $set, $BioDBValues );
-					// var_dump( $BioDBValues );
+					self::query_store_DB( $db, $query, $set, $wgBioDBValues );
+					// var_dump( $wgBioDBValues );
 				}
 			}
 		}
@@ -66,7 +66,7 @@ class BioDB {
 
 	}
 
-	private static function query_store_DB( $db, $query, $set, &$BioDBValues ) {
+	private static function query_store_DB( $db, $query, $set, &$wgBioDBValues ) {
 
 		$result = $db->query( $query, 'BioDB::query_store_DB' );
 
@@ -83,7 +83,7 @@ class BioDB {
 						}
 						$object[$fkey] = $value;
 					}
-					array_push( $BioDBValues, $object );
+					array_push( $wgBioDBValues, $object );
 				}
 			} 
 		}
@@ -109,7 +109,7 @@ class BioDB {
 	 * Get the specified index of the array for the specified local
 	 */
 	public static function doExternalValue( $parser, $frame, $args ) {
-		global $BioDBValues;
+		global $wgBioDBValues;
 		$output = "";
 
 		if ( isset( $args[0])  && !empty( $args[0] ) ) {
@@ -117,7 +117,7 @@ class BioDB {
 
 			$values = array();
 
-			foreach ( $BioDBValues as $entry ) {
+			foreach ( $wgBioDBValues as $entry ) {
 
 				if ( array_key_exists( $var, $entry ) ) {
 					if ( !empty( $entry[$var] ) ) {
@@ -138,9 +138,9 @@ class BioDB {
 	 */
 	private static function getIndexedValue( $var, $i ) {
 
-		global $BioDBValues;
-		if ( array_key_exists( $var, $BioDBValues[$i] ) ) {
-			return $BioDBValues[$i][$var];
+		global $wgBioDBValues;
+		if ( array_key_exists( $var, $wgBioDBValues[$i] ) ) {
+			return $wgBioDBValues[$i][$var];
 		}
 		else {
 			return '';
@@ -152,7 +152,7 @@ class BioDB {
 	 */
 	public static function doForExternalTable( $parser, $frame, $args ) {
 
-		global $BioDBValues;
+		global $wgBioDBValues;
 
 		$output = "";
 
@@ -167,8 +167,8 @@ class BioDB {
 			$variables = $matches[1];
 			$num_loops = 0;
 
-			$num_loops = max( $num_loops, count( $BioDBValues ) );
-			// var_dump( $BioDBValues );
+			$num_loops = max( $num_loops, count( $wgBioDBValues ) );
+			// var_dump( $wgBioDBValues );
 
 			for ( $i = 0; $i < $num_loops; $i++ ) {
 
@@ -257,7 +257,7 @@ class BioDB {
 	 */
 	public static function doStoreExternalTable( &$parser ) {
 
-		global $BioDBValues;
+		global $wgBioDBValues;
 		global $wgBioDBExpose;
 		global $smwgDefaultStore;
 
@@ -280,7 +280,7 @@ class BioDB {
 		
 		$customProps = self::assign_custom_props( array_slice( $params, 1 ) );
 
-		$num_loops = max( $num_loops, count( $BioDBValues ) );
+		$num_loops = max( $num_loops, count( $wgBioDBValues ) );
 
 		for ( $i = 0; $i < $num_loops; $i++ ) {
 
@@ -519,8 +519,8 @@ class BioDB {
 	 * Render the #clear_external_data parser function -> Important for every page so it can be used
 	 */
 	static function doClearExternalData( &$parser ) {
-		global $BioDBValues;
-		$BioDBValues = array();
+		global $wgBioDBValues;
+		$wgBioDBValues = array();
 	}
 
 	private static function numberOfDecimals($value) {
