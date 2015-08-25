@@ -22,6 +22,7 @@
 		"mediawiki/semantic-media-wiki": ">=2.0"
 	},
 	"autoload": {
+		"files": ["BioDB.php", "BioDB_body.php"],
 		"classmap": ["BioDB_body.php"]
 	}
 }
