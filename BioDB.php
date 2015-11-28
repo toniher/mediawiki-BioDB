@@ -34,14 +34,19 @@ call_user_func( function() {
 	
 	// We assume MySQL in the future it migth be other options
 	
+	global $wgDBserver;
+	global $wgDBname;
+	global $wgDBuser;
+	global $wgDBpassword;
+	
 	$GLOBALS['wgBioDB'] = array(
-		"server" => "127.0.0.1",
+		"server" => $wgDBserver,
 		"type" => "mysql",
-		"name" => "mydb",
-		"username" => "username",
-		"password" => "password",
+		"name" => $wgDBname,
+		"username" => $wgDBuser,
+		"password" => $wgDBpassword,
 		"flags" => "",
-		"tableprefix" => "",
+		"tableprefix" => ""
 	);
 	
 	// Exposed info to wiki
@@ -53,6 +58,15 @@ call_user_func( function() {
 	
 	$GLOBALS['wgBioDBExpose'] = array(
 		"gene" => array(
+			"db" => array(
+				"server" => "localhost",
+				"type" => "mysql",
+				"name" => "extraDB",
+				"username" => "myuser",
+				"password" => "mypasswd",
+				"flags" => "",
+				"tableprefix" => ""	
+			),
 			"query" => "SELECT distinct(c.gene_alias) AS gene_alias
 				, n.gene_name AS gene_name
 				, c.chromosome AS chromosome

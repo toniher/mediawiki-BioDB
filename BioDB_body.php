@@ -10,20 +10,6 @@ class BioDB {
 		global $wgBioDBExpose; // Take the configuration
 		global $wgBioDBValues; // What we do store
 
-		$db = DatabaseBase::factory( $wgBioDB["type"],
-			array(
-			'host' => $wgBioDB["server"],
-			'user' => $wgBioDB["username"],
-			'password' => $wgBioDB["password"],
-			// Both 'dbname' and 'dbName' have been
-			// used in different versions.
-			'dbname' => $wgBioDB["name"],
-			'dbName' => $wgBioDB["name"],
-			'flags' => $wgBioDB["flags"],
-			'tablePrefix' => $wgBioDB["tableprefix"],
-			)
-		);
-
 		$source = "";
 		$set = "";
 
@@ -35,13 +21,67 @@ class BioDB {
 
 				$vars = explode( ",", $source );
 
+				// Specific DB
+				$dbtype = $wgBioDB["type"];
+				$dbserver = $wgBioDB["server"];
+				$dbuser = $wgBioDB["username"];
+				$dbpassword = $wgBioDB["password"];
+				$dbname = $wgBioDB["name"];
+				$dbflags = $wgBioDB["flags"];
+				$dbtablePrefix = $wgBioDB["tableprefix"];
+				
 				if ( array_key_exists( $set, $wgBioDBExpose ) ) {
-					$query = $wgBioDBExpose[$set]["query"];
-
-					$query = self::process_query( $query, $vars );
 					
-					self::query_store_DB( $db, $query, $set, $wgBioDBValues );
-					// var_dump( $wgBioDBValues );
+					
+					if ( array_key_exists( "db", $wgBioDBExpose[$set] ) ) {
+
+						if ( array_key_exists( "type", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbtype = $wgBioDBExpose[$set]["db"]["type"];
+						}
+						if ( array_key_exists( "server", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbserver = $wgBioDBExpose[$set]["db"]["server"];
+						}
+						if ( array_key_exists( "username", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbuser = $wgBioDBExpose[$set]["db"]["username"];
+						}
+						if ( array_key_exists( "password", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbpassword = $wgBioDBExpose[$set]["db"]["password"];
+						}
+						if ( array_key_exists( "name", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbname = $wgBioDBExpose[$set]["db"]["name"];
+						}
+						if ( array_key_exists( "flags", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbflags = $wgBioDBExpose[$set]["db"]["flags"];
+						}
+						if ( array_key_exists( "tableprefix", $wgBioDBExpose[$set]["db"] ) ) {
+							$dbtablePrefix = $wgBioDBExpose[$set]["db"]["tableprefix"];
+						}
+						
+					}
+					
+					// Database definition
+					$db = DatabaseBase::factory( $dbtype,
+							array(
+							'host' => $dbserver,
+							'user' => $dbuser,
+							'password' => $dbpassword,
+							// Both 'dbname' and 'dbName' have been
+							// used in different versions.
+							'dbname' => $dbname,
+							'dbName' => $dbname,
+							'flags' => $dbflags,
+							'tablePrefix' => $dbtablePrefix,
+							)
+					);
+					
+					if ( array_key_exists( "query", $wgBioDBExpose[$set] ) ) {
+						$query = $wgBioDBExpose[$set]["query"];
+	
+						$query = self::process_query( $query, $vars );
+						
+						self::query_store_DB( $db, $query, $set, $wgBioDBValues );
+						// var_dump( $wgBioDBValues );
+					}
 				}
 			}
 		}
