@@ -463,7 +463,7 @@ class BioDB {
 
 		for ( $i = 0; $i < $num_loops; $i++ ) {
 
-			$internal = self::replaceBioIndex( $customProps, $wgBioDBValues[$i] );
+			$internal = self::replaceBioIndex( $customProps, $wgBioDBValues[$i], $parser );
 
 			// If no keys, skip
 			if ( count( $internal ) == 0 ) {
@@ -508,13 +508,14 @@ class BioDB {
 	}
 
 
-	private static function replaceBioIndex( $props, $values ) {
+	private static function replaceBioIndex( $props, $values, $parser ) {
 
 		$internal = array();
 
 		// get the variables used in this expression, get the number
 		// of values for each, and loop through 
 		$matches = array();
+		$expression = implode( '|', array_keys( $props ) ); // Let's put all params together
 		preg_match_all( '/{{{([^}]*)}}}/', $expression, $matches );
 		$variables = $matches[1];
 
@@ -524,7 +525,7 @@ class BioDB {
 				$key = str_replace( $variable, $values[$variable], $key );
 				$key = str_replace( "{{{", "", $key );
 				$key = str_replace( "}}}", "", $key );
-				$internal[$key] = $val;
+				$internal[$val] = $parser->recursivePreprocess( $key );
 			}
 
 		}
