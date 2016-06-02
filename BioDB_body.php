@@ -325,7 +325,7 @@ class BioDB {
 		for ( $i = 0; $i < $num_loops; $i++ ) {
 
 			$internal = array();
-			// We assign here non paremeter ones
+			// We assign here non parameter ones
 			$external = self::assign_non_parameters( $params );
 
 			foreach ( $variables as $variable ) {
@@ -435,7 +435,103 @@ class BioDB {
 
 		return null;
 	}
-	
+
+	/**
+	 * Render the #for_external_table parser function
+	 */
+	public static function doFlexStoreExternalTable( &$parser ) {
+
+		global $wgBioDBValues;
+		global $wgBioDBExpose;
+		global $smwgDefaultStore;
+
+		if ( $smwgDefaultStore != 'SMWSQLStore3' && ! class_exists( 'SIOHandler' ) ) {
+			// If SQLStore3 is not installed, we need SIO.
+			return EDUtils::formatErrorMessage( 'Semantic Internal Objects is not installed' );
+		}
+
+		$params = func_get_args();
+		array_shift( $params ); // we already know the $parser...
+
+		$expression = implode( '|', $params ); // Let's put all params together
+
+		$num_loops = 0;
+		
+		$customProps = self::assign_custom_props_all( array_slice( $params, 1 ) );
+
+		$num_loops = max( $num_loops, count( $wgBioDBValues ) );
+
+		for ( $i = 0; $i < $num_loops; $i++ ) {
+
+			$internal = self::replaceBioIndex( $customProps, $wgBioDBValues[$i] );
+
+			// If no keys, skip
+			if ( count( $internal ) == 0 ) {
+				continue;
+			}
+
+			if ( empty( $params[0] ) ) {
+				
+				// Submitting to Object
+				if ( $smwgDefaultStore == 'SMWSQLStore3' ) {
+					self::callObject( $parser, $internal );
+				}
+				continue;
+			}
+
+			array_unshift( $internal, $params[0] );
+
+			// If SQLStore3 is being used, we can call #subobject -
+			// that's what #set_internal would call anyway, so
+			// we're cutting out the middleman.
+			if ( $smwgDefaultStore == 'SMWSQLStore3' ) {
+				self::callSubobject( $parser, $internal );
+				continue;
+			}
+
+			// Add $parser to the beginning of the $params array,
+			// and pass the whole thing in as arguments to
+			// doSetInternal, to mimic a call to #set_internal.
+			array_unshift( $internal, $parser );
+			// As of PHP 5.3.1, call_user_func_array() requires that
+			// the function params be references. Workaround via
+			// http://stackoverflow.com/questions/2045875/pass-by-reference-problem-with-php-5-3-1
+			$refParams = array();
+			foreach ( $internal as $key => $value ) {
+				$refParams[$key] = &$internal[$key];
+			}
+			call_user_func_array( array( 'SIOHandler', 'doSetInternal' ), $refParams );
+
+		}
+
+		return null;
+	}
+
+
+	private static function replaceBioIndex( $props, $values ) {
+
+		$internal = array();
+
+		// get the variables used in this expression, get the number
+		// of values for each, and loop through 
+		$matches = array();
+		preg_match_all( '/{{{([^}]*)}}}/', $expression, $matches );
+		$variables = $matches[1];
+
+		foreach ( $props as $key => $val ) {
+		
+			foreach ( $variables as $variable ) {
+				$key = str_replace( $variable, $values[$variable], $key );
+				$key = str_replace( "{{{", "", $key );
+				$key = str_replace( "}}}", "", $key );
+				$internal[$key] = $val;
+			}
+
+		}
+
+		return $internal;
+
+	}
 
 	/** Assign custom values **/
 	private static function assign_non_parameters( $params ) {
@@ -554,7 +650,28 @@ class BioDB {
 		
 		return $keysProps;
 	}
-	
+
+	/**
+	 * Assign custom properties
+	 */
+	public static function assign_custom_props_all( $array ) {
+		
+		$keysProps = array();
+		
+		foreach ( $array as $element ) {
+			
+			$assign = explode( "=", $element, 2 );
+			if ( count( $assign ) == 2 ) {
+				
+				$prop = trim( $assign[0] );
+				$valraw = trim( $assign[1] );
+				$keysProps[ $valraw ] = $prop;
+			}
+		}
+		
+		return $keysProps;
+	}
+
 	/**
 	 * Render the #clear_external_data parser function -> Important for every page so it can be used
 	 */

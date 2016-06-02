@@ -105,6 +105,7 @@ function wfBioDBParserFunction_Setup( &$parser ) {
 	$parser->setFunctionHook( 'BioDB_value', 'BioDB::doExternalValue', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_table', 'BioDB::doForExternalTable', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_store_table', 'BioDB::doStoreExternalTable' );
+	$parser->setFunctionHook( 'BioDB_fstore_table', 'BioDB::doFlexStoreExternalTable' );
 	$parser->setFunctionHook( 'BioDB_clear', 'BioDB::doClearExternalData' );
 	return true;
 }
@@ -114,6 +115,7 @@ function wfBioDBParserFunction_Magic( &$magicWords, $langCode ) {
 	$magicWords['BioDB_value'] = array( 0, 'BioDB_value' );
 	$magicWords['BioDB_table'] = array( 0, 'BioDB_table' );
 	$magicWords['BioDB_store_table'] = array( 0, 'BioDB_store_table' );
+	$magicWords['BioDB_fstore_table'] = array( 0, 'BioDB_fstore_table' );
 	$magicWords['BioDB_clear'] = array( 0, 'BioDB_clear' );
 	# unless we return true, other parser functions extensions won't get loaded.
 	return true;
