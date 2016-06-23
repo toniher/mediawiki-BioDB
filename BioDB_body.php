@@ -172,6 +172,76 @@ class BioDB {
 		#return $parser->insertStripItem( $output, $parser->mStripState );
 	}
 
+
+	/**
+	 * Get the specified index of the array for the specified local
+	 */
+	public static function doCountValue( $parser, $frame, $args ) {
+		global $wgBioDBValues;
+		$output = 0;
+
+		if ( isset( $args[0])  && !empty( $args[0] ) ) {
+			$var = trim( $frame->expand( $args[0] ) );
+
+			$values = array();
+
+			foreach ( $wgBioDBValues as $entry ) {
+
+				if ( array_key_exists( $var, $entry ) ) {
+					if ( !empty( $entry[$var] ) ) {
+						array_push( $values, $entry[$var] );
+					}
+				}
+			}
+			$output = count( $values );
+		}
+
+		return $output;
+		#return $parser->insertStripItem( $output, $parser->mStripState );
+	}
+
+	/**
+	 * Get the specified index of the array for the specified local
+	 */
+	public static function doExistsValue( $parser, $frame, $args ) {
+		global $wgBioDBValues;
+		$output = 0;
+
+		$yes = "";
+		$no = "";
+
+		if ( isset( $args[0])  && !empty( $args[0] ) ) {
+			$var = trim( $frame->expand( $args[0] ) );
+
+			if ( isset( $args[1])  && !empty( $args[1] ) ) {
+				$yes = trim( $frame->expand( $args[1] ) );
+			}
+			if ( isset( $args[2])  && !empty( $args[2] ) ) {
+				$no = trim( $frame->expand( $args[2] ) );
+			}
+
+			$values = array();
+
+			foreach ( $wgBioDBValues as $entry ) {
+
+				if ( array_key_exists( $var, $entry ) ) {
+					if ( !empty( $entry[$var] ) ) {
+						array_push( $values, $entry[$var] );
+					}
+				}
+			}
+			$output = count( $values );
+		}
+
+		if ( $output > 0 ) {
+			return $yes;
+		}
+
+		return $no;
+		#return $parser->insertStripItem( $output, $parser->mStripState );
+	}
+
+
 	/**
 	 * Get the specified index of the array for the specified local
 	 * variable retrieved by #get_external_data
