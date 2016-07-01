@@ -152,7 +152,7 @@ class BioDB {
 		global $wgBioDBValues;
 		$output = "";
 
-		if ( isset( $args[0])  && !empty( $args[0] ) ) {
+		if ( isset( $args[0] ) && !empty( $args[0] ) ) {
 			$var = trim( $frame->expand( $args[0] ) );
 
 			$values = array();
@@ -166,6 +166,19 @@ class BioDB {
 				}
 			}
 			$output = implode( "*", $values );
+
+			if ( $output == "" && isset( $args[1] ) && !empty( $args[1] ) ) {
+				$output = trim( $frame->expand( $args[1] ) );
+			}
+
+			if ( !empty($output) && isset( $args[2] ) && !empty( $args[2] ) ) {
+				$formatted = trim( $frame->expand( $args[2] ) );
+
+				$formatted_output = str_replace( "#P1", $output, $formatted ) ;
+
+				$output = $formatted_output;
+			}
+
 		}
 
 		return $output;
@@ -207,18 +220,8 @@ class BioDB {
 		global $wgBioDBValues;
 		$output = 0;
 
-		$yes = "";
-		$no = "";
-
 		if ( isset( $args[0])  && !empty( $args[0] ) ) {
 			$var = trim( $frame->expand( $args[0] ) );
-
-			if ( isset( $args[1])  && !empty( $args[1] ) ) {
-				$yes = trim( $frame->expand( $args[1] ) );
-			}
-			if ( isset( $args[2])  && !empty( $args[2] ) ) {
-				$no = trim( $frame->expand( $args[2] ) );
-			}
 
 			$values = array();
 
@@ -234,11 +237,11 @@ class BioDB {
 		}
 
 		if ( $output > 0 ) {
-			return $yes;
+			return isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+		} else {
+			return isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : '';
 		}
 
-		return $no;
-		#return $parser->insertStripItem( $output, $parser->mStripState );
 	}
 
 
