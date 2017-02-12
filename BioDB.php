@@ -12,7 +12,7 @@ call_user_func( function() {
 			'path' => __FILE__,     // Magic so that svn revision number can be shown
 			'name' => "BioDB",
 			'description' => "Retrieve information from an existing Biological Database",
-			'version' => '0.2.1', 
+			'version' => '0.3.0', 
 			'author' => array("Toniher", "Yaron Koren", "et al."),
 			'url' => "https://www.mediawiki.org/wiki/User:Toniher",
 	);
@@ -94,9 +94,18 @@ call_user_func( function() {
 				"assembly" => "Is in Assembly",
 				"annotation" => "Has Annotation",
 				"codingnature" => "Is Coding"
-			)
+			),
+			"api" => true
 		)
 	);
+
+
+	# API Stuff
+	$GLOBALS["wgAutoloadClasses"]['ApiBioDB'] = $dir. 'BioDB.api.php';
+
+	//api modules
+	$wgAPIModules['BioDB'] = 'ApiBioDB';
+
 
 });
 
