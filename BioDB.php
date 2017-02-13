@@ -110,7 +110,7 @@ call_user_func( function() {
 });
 
 function wfBioDBParserFunction_Setup( &$parser ) {
-	$parser->setFunctionHook( 'BioDB', 'BioDB::executeBioDBret', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'BioDB', 'BioDB::executeBioDB', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_value', 'BioDB::doExternalValue', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_count', 'BioDB::doCountValue', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_exists', 'BioDB::doExistsValue', SFH_OBJECT_ARGS );
