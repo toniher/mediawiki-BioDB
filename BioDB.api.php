@@ -8,9 +8,15 @@ class ApiBioDB extends ApiBase {
 		$param = null;
 		$data = null;
 		$output = array();
+		$table = false;
+		$cols = null;
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
+		}
+		
+		if ( array_key_exists( "table", $params ) ) {
+			$table = $params["table"];
 		}
 
 		if ( array_key_exists( "query", $params ) ) {
@@ -23,7 +29,31 @@ class ApiBioDB extends ApiBase {
 			
 		//	$data = $output[$params["query"]];
 		// }
+		
 		$data = $output;
+		
+		if ( $table ) {
+			
+			$cols = array();
+			
+			$subs = $params["query"].".";
+			$tablerows = array();
+			foreach ( $data as $row ) {
+				$tablerow = array();
+
+				foreach( $row as $key => $val ) {
+					array_push( $tablerow, $val );
+					
+					$key = str_replace( $subs, "", $key );
+					
+					$cols[$key] = 1;
+				}
+				
+				array_push( $tablerows, $tablerow );
+			}
+			
+			$cols = array_keys( $cols );
+		}
 		
 		$paramq = array();
 		
@@ -32,7 +62,7 @@ class ApiBioDB extends ApiBase {
 		}
 
 #		var_dump( $data ); exit;
-#		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $query, 'param' => $paramq, 'biodata' => $data ) );
+		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'biodata' => $data ) );
 
 		return true;
 
@@ -46,6 +76,10 @@ class ApiBioDB extends ApiBase {
 			),
 			'param' => array(
 				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => false
+			),
+			'table' => array(
+				ApiBase::PARAM_TYPE => 'boolean',
 				ApiBase::PARAM_REQUIRED => false
 			)
 		);
