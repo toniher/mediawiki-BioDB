@@ -98,7 +98,8 @@ class ApiBioDB extends ApiBase {
 	public function getParamDescription() {
 		return array(
 			'query' => 'Actual query name to retrieve, as defined in configuration',
-			'param' => 'Parameter(s) to pass to query'
+			'param' => 'Parameter(s) to pass to query',
+			'table' => 'Whether to show the format in table output'
 		);
 	}
 	public function getVersion() {
