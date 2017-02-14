@@ -68,7 +68,7 @@ class ApiBioDB extends ApiBase {
 		}
 
 #		var_dump( $data ); exit;
-		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'biodata' => $data ) );
+		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
 
 		return true;
 
