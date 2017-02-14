@@ -38,21 +38,27 @@ class ApiBioDB extends ApiBase {
 			
 			$subs = $params["query"].".";
 			$tablerows = array();
+			
+			$first = 0;
 			foreach ( $data as $row ) {
 				$tablerow = array();
-
+				
 				foreach( $row as $key => $val ) {
 					array_push( $tablerow, $val );
 					
 					$key = str_replace( $subs, "", $key );
 					
-					$cols[$key] = 1;
+					if ( $first === 0 ) {
+						array_push( $cols, $key );
+					}
 				}
 				
 				array_push( $tablerows, $tablerow );
+				$first = $first + 1;
 			}
 			
-			$cols = array_keys( $cols );
+			$data = $tablerows;
+			
 		}
 		
 		$paramq = array();
