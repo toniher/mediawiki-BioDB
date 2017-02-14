@@ -20,8 +20,9 @@ class BioDB {
 				$source = trim( $frame->expand( $args[1] ) );
 				
 			}
-			
+		
 			self::callBioDB( $set, $source, $wgBioDBValues );
+			//var_dump( $wgBioDBValues );
 		}
 
 		return;
@@ -31,7 +32,7 @@ class BioDB {
 	public static function returnBioDB( $set, $source ) {
 		
 		global $wgBioDBValues;
-		self::callBioDB( $set, $source,  $wgBioDBValues );
+		self::callBioDB( $set, $source, $wgBioDBValues );
 		
 		// Let's return actual values
 		return $wgBioDBValues;
@@ -39,7 +40,7 @@ class BioDB {
 	}
 
 	
-	public static function callBioDB( $set, $source,  $wgBioDBValues ) {
+	public static function callBioDB( $set, $source, &$wgBioDBValues ) {
 
 		global $wgBioDB;
 		global $wgBioDBExpose; // Take the configuration
@@ -110,9 +111,10 @@ class BioDB {
 				$query = self::process_query( $query, $vars );
 				
 				self::query_store_DB( $db, $query, $set, $wgBioDBValues );
-				// var_dump( $wgBioDBValues );
+				//var_dump( $wgBioDBValues );
 			}
 		}
+
 	
 	}
 

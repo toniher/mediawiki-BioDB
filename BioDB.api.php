@@ -7,6 +7,7 @@ class ApiBioDB extends ApiBase {
 		
 		$param = null;
 		$data = null;
+		$output = array();
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
@@ -15,13 +16,14 @@ class ApiBioDB extends ApiBase {
 		if ( array_key_exists( "query", $params ) ) {
 			// Query new function in BioDB
 			$output = BioDB::returnBioDB( $params["query"], $param );
-
 		}
 		
-		if ( array_key_exists( $query, $output ) ) {
+		# TODO: No filtering now
+		//if ( array_key_exists( $params["query"], $output ) ) {
 			
-			$data = $output[$query];
-		}
+		//	$data = $output[$params["query"]];
+		// }
+		$data = $output;
 		
 		$paramq = array();
 		
@@ -29,7 +31,8 @@ class ApiBioDB extends ApiBase {
 			$paramq = explode( ",", $param );
 		}
 
-		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $query, 'param' => $paramq, 'biodata' => $data ) );
+#		var_dump( $data ); exit;
+#		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $query, 'param' => $paramq, 'biodata' => $data ) );
 
 		return true;
 
