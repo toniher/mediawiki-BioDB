@@ -104,8 +104,7 @@ call_user_func( function() {
 	$GLOBALS["wgAutoloadClasses"]['ApiBioDB'] = $dir. 'BioDB.api.php';
 
 	//api modules
-	$wgAPIModules['BioDB'] = 'ApiBioDB';
-
+	$GLOBALS['wgAPIModules']['BioDB'] = 'ApiBioDB';
 
 });
 
