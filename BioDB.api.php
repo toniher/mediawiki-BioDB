@@ -10,6 +10,8 @@ class ApiBioDB extends ApiBase {
 		$output = array();
 		$table = false;
 		$cols = null;
+		$format = null;
+		$sep = "\t";
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
@@ -18,7 +20,15 @@ class ApiBioDB extends ApiBase {
 		if ( array_key_exists( "table", $params ) ) {
 			$table = $params["table"];
 		}
+		
+		if ( array_key_exists( "format", $params ) ) {
+			$format = $params["format"];
+		}
 
+		if ( array_key_exists( "sep", $params ) ) {
+			$sep = $params["sep"];
+		}
+		
 		if ( array_key_exists( "query", $params ) ) {
 			// Query new function in BioDB
 			$output = BioDB::returnBioDB( $params["query"], $param );
@@ -68,8 +78,30 @@ class ApiBioDB extends ApiBase {
 		}
 
 #		var_dump( $data ); exit;
-		$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
 
+		if ( $table && $format == 'csv' ) {
+			
+			$csvstr = implode( $sep, $cols )."\n";
+			
+			foreach ( $data as $row ) {
+				
+				$csvstr = $csvstr . implode( $sep, $row ) ."\n";
+				
+			}
+			
+			header("Content-Type: application/csv");
+			header("Content-Disposition: attachment; filename=".$params["query"].".csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+			echo $csvstr;
+			exit;
+			
+		} else {
+
+			$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
+
+		}
+		
 		return true;
 
 	}
