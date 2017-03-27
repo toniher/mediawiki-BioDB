@@ -11,7 +11,7 @@ class ApiBioDB extends ApiBase {
 		$table = false;
 		$cols = null;
 		$format = null;
-		$sep = "\t";
+		$sep = null;
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
@@ -81,11 +81,20 @@ class ApiBioDB extends ApiBase {
 
 		if ( $table && $format == 'csv' ) {
 			
-			$csvstr = implode( $sep, $cols )."\n";
+			// TODO: Fix this ugly solution
+			if ( $sep ) {
+				$csvstr = implode( $sep, $cols )."\n";
+			} else {
+				$csvstr = implode( "\t", $cols )."\n";
+			}
 			
 			foreach ( $data as $row ) {
 				
-				$csvstr = $csvstr . implode( $sep, $row ) ."\n";
+				if ( $sep ) {
+					$csvstr = $csvstr . implode( $sep, $row ) ."\n";
+				} else {
+					$csvstr = $csvstr . implode( "\t", $row ) ."\n";
+				}
 				
 			}
 			
