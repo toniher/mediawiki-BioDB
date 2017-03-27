@@ -21,8 +21,8 @@ class ApiBioDB extends ApiBase {
 			$table = $params["table"];
 		}
 		
-		if ( array_key_exists( "format", $params ) ) {
-			$format = $params["format"];
+		if ( array_key_exists( "fileformat", $params ) ) {
+			$format = $params["fileformat"];
 		}
 
 		if ( array_key_exists( "sep", $params ) ) {
