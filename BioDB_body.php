@@ -168,8 +168,8 @@ class BioDB {
 	private static function removeNull ( $value ) {
 		
 		if ($value == "NULL") {
-				
-				$value = "";
+	
+			$value = "";
 		}
 		
 		// Let's strip tags -> TODO: Check if actually it's the case that not
@@ -193,7 +193,7 @@ class BioDB {
 			foreach ( $wgBioDBValues as $entry ) {
 
 				if ( array_key_exists( $var, $entry ) ) {
-					if ( !empty( $entry[$var] ) ) {
+					if ( ! is_null( $entry[$var] ) ) {
 						array_push( $values, $entry[$var] );
 					}
 				}
