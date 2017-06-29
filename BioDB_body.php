@@ -166,9 +166,8 @@ class BioDB {
 
 
 	private static function removeNull ( $value ) {
-		
-		if ($value == "NULL") {
 	
+		if ($value == "NULL" || $value === null ) {
 			$value = "";
 		}
 		
@@ -353,12 +352,13 @@ class BioDB {
 							}
 						}
 					}
-					
+			
+					// Handling null values	
+					$value = self::removeNull($value);
+	
 					if ( !empty( $template ) ) {
-						if ( $value != '' ) {
-							$templatevar = "{{".$template."|".$value."}}";
-							$value = trim( $parser->recursivePreprocess( $templatevar ) );
-						}
+						$templatevar = "{{".$template."|".$value."}}";
+						$value = trim( $parser->recursivePreprocess( $templatevar ) );
 					}
 					
 					// Add Prefix if available
@@ -377,16 +377,17 @@ class BioDB {
 						}
 					}
 					
-					$cur_expression = str_replace( '{{{' . $prevariable . '}}}', self::removeNull($value), $cur_expression );
+					$cur_expression = str_replace( '{{{' . $prevariable . '}}}', $value, $cur_expression );
 
 					if ( !empty( $value ) ) {
 						$allempty = false;
 					}
-					
+				
 				}
 
 				// Fix if empty value -> This way we avoid to clear so often
 				if ( ! $allempty ) {
+					
 					$output .= $cur_expression; //TODO: We should parse further here!
 				}
 			}
