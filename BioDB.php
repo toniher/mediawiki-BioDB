@@ -12,7 +12,7 @@ call_user_func( function() {
 			'path' => __FILE__,     // Magic so that svn revision number can be shown
 			'name' => "BioDB",
 			'description' => "Retrieve information from an existing Biological Database",
-			'version' => '0.3.1', 
+			'version' => '0.3.2', 
 			'author' => array("Toniher", "Yaron Koren", "et al."),
 			'url' => "https://www.mediawiki.org/wiki/User:Toniher",
 	);
