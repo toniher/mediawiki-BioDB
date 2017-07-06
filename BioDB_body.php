@@ -421,6 +421,9 @@ class BioDB {
 				// Get text from template
 				$templateText = ContentHandler::getContentText( $templateContent );
 				
+				$templateText = str_replace( "<includeonly>", "", $templateText );
+				$templateText = str_replace( "</includeonly>", "", $templateText );
+
 				// get the variables used in this expression, get the number
 				// of values for each, and loop through 
 				$matches = array();
@@ -450,9 +453,9 @@ class BioDB {
 						$value = self::removeNull($value);
 						
 						if ( empty( $value ) ) {
-							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $defaultValues[$variable], $templateText );
+							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $defaultValues[$variable], $templateBit );
 						} else {						
-							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $value, $templateText );
+							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $value, $templateBit );
 						}
 					}
 					
@@ -462,13 +465,13 @@ class BioDB {
 				
 				// Process all preOutput for any additional parser function
 				
-				$output = $parse->recursivePreprocess( $preOutput );
+				$output = $parser->recursivePreprocess( $preOutput );
 				
 			}
 
 		}
 
-		return $output;
+		return $parser->insertStripItem( $output, $parser->mStripState );
 	}
 	
 	/**
