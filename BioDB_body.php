@@ -488,7 +488,7 @@ class BioDB {
 		foreach ( $variables as $variable ) {
 			
 			$parts = explode( "|", $variable );
-			if ( array_count( $parts ) > 1 ) {
+			if ( count( $parts ) > 1 ) {
 				$defaultValues[$parts[0]] = $parts[1];
 			} else {
 				$defaultValues[$parts[0]] = $defaultVal;
