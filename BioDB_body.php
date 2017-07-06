@@ -397,6 +397,107 @@ class BioDB {
 		return $output;
 	}
 	
+	
+	/**
+	 * Render straight from a template to a row
+	 */
+	public static function doForExternalTableTemplate( $parser, $frame, $args ) {
+
+		global $wgBioDBValues;
+		
+		$output = "";
+
+		if ( isset( $args[0])  && !empty( $args[0] ) ) {
+
+			$template = trim( $frame->expand( $args[0] ) );
+
+			$templateTitle = Title::newFromText( $template );
+			
+			if ( $templateTitle->exists() ) {
+			
+				$templatePage = WikiPage::factory( $templateTitle );
+				$templateContent = $templatePage->getContent( Revision::RAW );
+				
+				// Get text from template
+				$templateText = ContentHandler::getContentText( $templateContent );
+				
+				// get the variables used in this expression, get the number
+				// of values for each, and loop through 
+				$matches = array();
+				preg_match_all( '/{{{([^}]*)}}}/', $templateText, $matches );
+				$variables = $matches[1];
+								
+				$structValues = self::assignTemplateValues( $variables ); 
+				$variables = $structValues[0];
+				$defaultValues = $structValues[1];
+				$fullValues = $structValues[2];
+				
+				// Parsing rows
+				$num_loops = 0;
+				$num_loops = max( $num_loops, count( $wgBioDBValues ) );
+				// var_dump( $wgBioDBValues );
+	
+				$preOutput = "";
+	
+				for ( $i = 0; $i < $num_loops; $i++ ) {
+	
+					$templateBit = $templateText;
+	
+					foreach ( $variables as $variable ) {
+	
+						$value = self::getIndexedValue( $variable , $i );
+						// Handling null values	
+						$value = self::removeNull($value);
+						
+						if ( empty( $value ) ) {
+							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $defaultValues[$variable], $templateText );
+						} else {						
+							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $value, $templateText );
+						}
+					}
+					
+						
+					$preOutput .= $templateBit; // Adding output
+				}
+				
+				// Process all preOutput for any additional parser function
+				
+				$output = $parse->recursivePreprocess( $preOutput );
+				
+			}
+
+		}
+
+		return $output;
+	}
+	
+	/**
+	 * Process template values in detail
+	 */
+	
+	private static function assignTemplateValues( $variables ) {
+		
+		$values = array();
+		$defaultValues = array();
+		$fullValues = array();
+		$defaultVal = "";
+		
+		foreach ( $variables as $variable ) {
+			
+			$parts = explode( "|", $variable );
+			if ( array_count( $parts ) > 1 ) {
+				$defaultValues[$parts[0]] = $parts[1];
+			} else {
+				$defaultValues[$parts[0]] = $defaultVal;
+			}
+			
+			array_push( $values, $parts[0] );
+			$fullValues[$parts[0]] = $variable;
+		}
+		
+		return( array( $values, $defaultValues, $fullValues ) );
+		
+	}
 
 
 	/**

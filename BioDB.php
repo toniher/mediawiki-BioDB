@@ -114,6 +114,7 @@ function wfBioDBParserFunction_Setup( &$parser ) {
 	$parser->setFunctionHook( 'BioDB_count', 'BioDB::doCountValue', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_exists', 'BioDB::doExistsValue', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_table', 'BioDB::doForExternalTable', SFH_OBJECT_ARGS );
+	$parser->setFunctionHook( 'BioDB_table_template', 'BioDB::doForExternalTableTemplate', SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_store_table', 'BioDB::doStoreExternalTable' );
 	$parser->setFunctionHook( 'BioDB_fstore_table', 'BioDB::doFlexStoreExternalTable' );
 	$parser->setFunctionHook( 'BioDB_clear', 'BioDB::doClearExternalData' );
@@ -126,6 +127,7 @@ function wfBioDBParserFunction_Magic( &$magicWords, $langCode ) {
 	$magicWords['BioDB_count'] = array( 0, 'BioDB_count' );
 	$magicWords['BioDB_exists'] = array( 0, 'BioDB_exists' );
 	$magicWords['BioDB_table'] = array( 0, 'BioDB_table' );
+	$magicWords['BioDB_table_template'] = array( 0, 'BioDB_table_template' );
 	$magicWords['BioDB_store_table'] = array( 0, 'BioDB_store_table' );
 	$magicWords['BioDB_fstore_table'] = array( 0, 'BioDB_fstore_table' );
 	$magicWords['BioDB_clear'] = array( 0, 'BioDB_clear' );
