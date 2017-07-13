@@ -184,6 +184,10 @@ class ApiBioDB extends ApiBase {
 			'sep' => array(
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => false
+			),
+			'typesolve' => array(
+				ApiBase::PARAM_TYPE => 'boolean',
+				ApiBase::PARAM_REQUIRED => false
 			)
 		);
 	}
@@ -198,7 +202,8 @@ class ApiBioDB extends ApiBase {
 			'param' => 'Parameter(s) to pass to query',
 			'table' => 'Whether to show the format in table output',
 			'fileformat' => 'In table output, whether to download in csv format',
-			'sep'	=> 'When using csv file format, the chosen separator (default tab)'
+			'sep'	=> 'When using csv file format, the chosen separator (default tab)',
+			'typesolve' => 'Adapt type (int, float) of values automatically'
 		);
 	}
 	public function getVersion() {
