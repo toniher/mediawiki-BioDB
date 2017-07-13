@@ -130,18 +130,17 @@ class ApiBioDB extends ApiBase {
 		
 		foreach ( $data as $row ) {
 			
-			$newrow = array();
+			$newstruct = array();
 			
 			foreach ( $row as $prop => $value ) {
 				
-				$newstruct = array();
 				
 				$newstruct[$prop] = $this->fixType( $value );
 				
 				array_push( $newrow, $newstruct );
 			}
 			
-			array_push( $newdata, $newrow );
+			array_push( $newstruct, $newdata );
 			
 		}
 		
