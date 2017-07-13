@@ -138,7 +138,7 @@ class ApiBioDB extends ApiBase {
 				
 			}
 			
-			array_push( $newstruct, $newdata );
+			array_push( $newdata, $newstruct );
 			
 		}
 		
