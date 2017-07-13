@@ -148,11 +148,13 @@ class ApiBioDB extends ApiBase {
 	
 	private function fixType( $value ) {
 		
-		if ( is_int( $value ) ) {
-			$value = intval( $value );
-		} else {
-			if ( is_float( $value ) ) {
-				$value = floatval( $value );	
+		if ( is_numeric( $value ) ) {
+			$intvalue = intval( $value );
+		
+			if ( $intvalue == $value ) {
+				$value = $intvalue;
+			} else {
+				$value = floatval( $value );
 			}
 		}
 		
