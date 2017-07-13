@@ -12,7 +12,7 @@ call_user_func( function() {
 			'path' => __FILE__,     // Magic so that svn revision number can be shown
 			'name' => "BioDB",
 			'description' => "Retrieve information from an existing Biological Database",
-			'version' => '0.4.0', 
+			'version' => '0.5.0', 
 			'author' => array("Toniher", "Yaron Koren", "et al."),
 			'url' => "https://www.mediawiki.org/wiki/User:Toniher",
 	);
@@ -48,6 +48,35 @@ call_user_func( function() {
 		"flags" => "",
 		"tableprefix" => ""
 	);
+	
+	// Alternative, different default DBs
+	$GLOBALS["wgBioDBmultiple"] = false; // Default false
+	
+	/**
+	 * Multiple DB if necessary
+	 * 
+	$GLOBALS['wgBioDB'] = array(
+		"main": array(
+			"server" => "first",
+			"type" => "mysql",
+			"name" => "firstDB",
+			"username" => "firstuser",
+			"password" => "firstpasswd",
+			"flags" => "",
+			"tableprefix" => ""
+		),
+		"extra": array(
+			"server" => "second",
+			"type" => "mysql",
+			"name" => "secondDB",
+			"username" => "seconduser",
+			"password" => "secondpasswd",
+			"flags" => "",
+			"tableprefix" => ""
+		)
+	);
+	
+	**/
 	
 	// Exposed info to wiki
 	// Queried as {{#BioDB_value:goinfo|param}}
@@ -95,9 +124,11 @@ call_user_func( function() {
 				"annotation" => "Has Annotation",
 				"codingnature" => "Is Coding"
 			),
-			"api" => true
+			"api" => array('sysop')
 		)
 	);
+
+	$GLOBALS["wgBioDBApi"] = true; // Default exposing API of all points
 
 
 	# API Stuff

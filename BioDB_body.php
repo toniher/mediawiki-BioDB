@@ -44,25 +44,45 @@ class BioDB {
 
 		global $wgBioDB;
 		global $wgBioDBExpose; // Take the configuration
+		global $wgBioDBmultiple;
 	
 		$vars = null;
 		
 		if ( $source ) {
 			$vars = explode( ",", $source );
-
 		}
-		
-		// Specific DB
-		$dbtype = $wgBioDB["type"];
-		$dbserver = $wgBioDB["server"];
-		$dbuser = $wgBioDB["username"];
-		$dbpassword = $wgBioDB["password"];
-		$dbname = $wgBioDB["name"];
-		$dbflags = $wgBioDB["flags"];
-		$dbtablePrefix = $wgBioDB["tableprefix"];
 		
 		if ( array_key_exists( $set, $wgBioDBExpose ) ) {
 			
+			// Specific DB
+			if ( $wgBioDBmultiple ) {
+				
+				// Assume multiple and sets to be based on db:set syntax
+				$partsDB = explode( ":", $set, 2 );
+				
+				$dbkey = null;
+				
+				if ( count( $partsDB == 2 ) ) { 
+					$dbkey = $partsDB[0];
+				}
+				
+				$dbtype = $wgBioDB[$dbkey]["type"];
+				$dbserver = $wgBioDB[$dbkey]["server"];
+				$dbuser = $wgBioDB[$dbkey]["username"];
+				$dbpassword = $wgBioDB[$dbkey]["password"];
+				$dbname = $wgBioDB[$dbkey]["name"];
+				$dbflags = $wgBioDB[$dbkey]["flags"];
+				$dbtablePrefix = $wgBioDB[$dbkey]["tableprefix"];
+				
+			} else {
+				$dbtype = $wgBioDB["type"];
+				$dbserver = $wgBioDB["server"];
+				$dbuser = $wgBioDB["username"];
+				$dbpassword = $wgBioDB["password"];
+				$dbname = $wgBioDB["name"];
+				$dbflags = $wgBioDB["flags"];
+				$dbtablePrefix = $wgBioDB["tableprefix"];
+			}
 			
 			if ( array_key_exists( "db", $wgBioDBExpose[$set] ) ) {
 

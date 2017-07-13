@@ -12,7 +12,8 @@ class ApiBioDB extends ApiBase {
 		$cols = null;
 		$format = null;
 		$sep = null;
-		$typesolve = false;
+		$typesolve = false; // No typesolving at the beginning
+		$APIallow = true; // Should API be allowed from
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
@@ -37,13 +38,8 @@ class ApiBioDB extends ApiBase {
 		if ( array_key_exists( "query", $params ) ) {
 			// Query new function in BioDB
 			$output = BioDB::returnBioDB( $params["query"], $param );
+			$APIallow = $this->checkPermissions( $params["query"] );
 		}
-		
-		# TODO: No filtering now
-		//if ( array_key_exists( $params["query"], $output ) ) {
-			
-		//	$data = $output[$params["query"]];
-		// }
 		
 		$data = $output;
 
@@ -86,42 +82,78 @@ class ApiBioDB extends ApiBase {
 			$paramq = explode( ",", $param );
 		}
 
-#		var_dump( $data ); exit;
+		if ( $APIallow ) { // We allow API by default
 
-		if ( $table && $format == 'csv' ) {
-			
-			// TODO: Fix this ugly solution
-			if ( $sep ) {
-				$csvstr = implode( $sep, $cols )."\n";
-			} else {
-				$csvstr = implode( "\t", $cols )."\n";
-			}
-			
-			foreach ( $data as $row ) {
+			if ( $table && $format == 'csv' ) {
 				
+				// TODO: Fix this ugly solution
 				if ( $sep ) {
-					$csvstr = $csvstr . implode( $sep, $row ) ."\n";
+					$csvstr = implode( $sep, $cols )."\n";
 				} else {
-					$csvstr = $csvstr . implode( "\t", $row ) ."\n";
+					$csvstr = implode( "\t", $cols )."\n";
 				}
 				
+				foreach ( $data as $row ) {
+					
+					if ( $sep ) {
+						$csvstr = $csvstr . implode( $sep, $row ) ."\n";
+					} else {
+						$csvstr = $csvstr . implode( "\t", $row ) ."\n";
+					}
+					
+				}
+				
+				header("Content-Type: application/csv");
+				header("Content-Disposition: attachment; filename=".$params["query"].".csv");
+				header("Pragma: no-cache");
+				header("Expires: 0");
+				echo $csvstr;
+				exit;
+				
+			} else {
+			
+				$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
+	
 			}
-			
-			header("Content-Type: application/csv");
-			header("Content-Disposition: attachment; filename=".$params["query"].".csv");
-			header("Pragma: no-cache");
-			header("Expires: 0");
-			echo $csvstr;
-			exit;
-			
-		} else {
 		
-			$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
-
 		}
 		
 		return true;
 
+	}
+	
+	private function checkPermissions( $query ) {
+		
+		global $wgBioDBApi;
+		global $wgBioDBExpose;
+		
+		global $wgUser; //This might be changed
+
+		// Default behaviour
+		$APIallow = $wgBioDBApi;
+
+		if ( array_key_exists( "api", $wgBioDBExpose[$query] ) ) {
+			
+			$APIallow = false; // Once api defined, be restrictive
+			
+			$apiGroups = $wgBioDBExpose[$query][$api];
+			
+			$groups = $wgUser->getGroups();
+			
+			if ( in_array( "*", $apiGroups ) ) {
+				$APIallow = true;
+			}
+			
+			foreach ( $groups as $group ) {
+				if ( in_array( $group, $apiGroups ) ) {
+					$APIallow = true;
+				}
+			}
+			
+		}
+		
+		return $APIallow;
+		
 	}
 	
 	private function processTyping( $data ) {
