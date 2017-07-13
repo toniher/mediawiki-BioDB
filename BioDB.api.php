@@ -12,6 +12,7 @@ class ApiBioDB extends ApiBase {
 		$cols = null;
 		$format = null;
 		$sep = null;
+		$typesolve = false;
 
 		if ( array_key_exists( "param", $params ) ) {
 			$param = $params["param"];
@@ -29,6 +30,10 @@ class ApiBioDB extends ApiBase {
 			$sep = $params["sep"];
 		}
 		
+		if ( array_key_exists( "typesolve", $params ) ) {
+			$typesolve = true;
+		}
+		
 		if ( array_key_exists( "query", $params ) ) {
 			// Query new function in BioDB
 			$output = BioDB::returnBioDB( $params["query"], $param );
@@ -41,6 +46,10 @@ class ApiBioDB extends ApiBase {
 		// }
 		
 		$data = $output;
+
+		if ( $typesolve ) {
+			$data = $this->processTyping( $data );
+		}
 		
 		if ( $table ) {
 			
@@ -106,13 +115,52 @@ class ApiBioDB extends ApiBase {
 			exit;
 			
 		} else {
-
+		
 			$this->getResult()->addValue( null, $this->getModuleName(), array ( 'status' => "OK", 'query' => $params["query"], 'param' => $paramq, 'cols' => $cols, 'rows' => $data ) );
 
 		}
 		
 		return true;
 
+	}
+	
+	private function processTyping( $data ) {
+		
+		$newdata = array( );
+		
+		foreach ( $data as $row ) {
+			
+			$newrow = array();
+			
+			foreach ( $row as $prop => $value ) {
+				
+				$newstruct = array();
+				
+				$newstruct[$prop] = $this->fixType( $value );
+				
+				array_push( $newrow, $newstruct );
+			}
+			
+			array_push( $newdata, $newrow );
+			
+		}
+		
+		return $newdata;
+		
+	}
+	
+	private function fixType( $value ) {
+		
+		if ( is_int( $value ) ) {
+			$value = intval( $value );
+		} else {
+			if ( is_float( $value ) ) {
+				$value = floatval( $value );	
+			}
+		}
+		
+		return $value;
+		
 	}
 	
 	public function getAllowedParams() {
