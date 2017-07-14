@@ -32,7 +32,7 @@ class ApiBioDB extends ApiBase {
 		}
 		
 		if ( array_key_exists( "typesolve", $params ) ) {
-			$typesolve = true;
+			$typesolve = $params["typesolve"];
 		}
 		
 		if ( array_key_exists( "query", $params ) ) {
