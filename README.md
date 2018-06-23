@@ -12,4 +12,5 @@ Based on External Data extension: https://www.mediawiki.org/wiki/Extension:Exter
 * Add exception handling and show errors
 * Allow specific connections per set
 * Allow different DBs engines
+* Be careful with -- if empty statements -> Only allow 'empty' strings
 
