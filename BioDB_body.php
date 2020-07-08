@@ -436,7 +436,7 @@ class BioDB {
 
 			if ( count( $args ) > 1 ) {
 				array_shift( $args );
-				$extraparams = self::getExtraTableParams( $args );
+				$extraparams = self::getExtraTableParams( $frame, $args );
 
 				if ( ! empty( $extraparams["header"] ) ) {
 
@@ -543,7 +543,7 @@ class BioDB {
 	 * Process extra params
 	 */
 
-	private static function getExtraTableParams( $args ) {
+	private static function getExtraTableParams( $frame, $args ) {
 
 		$extraparams = array( "html" => false, "header" => "", "footer" => "" );
 
