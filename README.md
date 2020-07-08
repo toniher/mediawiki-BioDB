@@ -7,9 +7,9 @@ Based on External Data extension: https://www.mediawiki.org/wiki/Extension:Exter
 
 ## TODO
 
+* Include pagination (e.g., via skip/limit or via localStorage)
 * Allow multiple queries at once
 * Add exception handling and show errors
 * Allow specific connections per set
-* Allow different DBs engines
 * Be careful with -- if empty statements -> Only allow 'empty' strings
 
