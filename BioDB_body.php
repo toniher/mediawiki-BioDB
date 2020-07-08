@@ -549,7 +549,7 @@ class BioDB {
 
 		foreach ( $args as $arg ) {
 
-			$arg = trim( $arg );
+			$arg = trim( $frame->expand( $arg ) );
 
 			if ( strpos( $arg, 'html' ) === 0) {
 				$extraparams["html"] = true;
