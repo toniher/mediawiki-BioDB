@@ -434,6 +434,8 @@ class BioDB {
 
 		if ( isset( $args[0])  && !empty( $args[0] ) ) {
 
+			$templateText = self::processTemplate( trim( $frame->expand( $args[0] ) ) );
+
 			if ( count( $args ) > 1 ) {
 				array_shift( $args );
 				$extraparams = self::getExtraTableParams( $frame, $args );
@@ -449,8 +451,6 @@ class BioDB {
 
 				}
 			}
-
-			$templateText = self::processTemplate( trim( $frame->expand( $args[0] ) ) );
 
 			if ( ! empty( $templateText ) ) {
 
