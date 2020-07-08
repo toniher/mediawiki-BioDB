@@ -425,7 +425,10 @@ class BioDB {
 
 		global $wgBioDBValues;
 
-		$extraparams = array( "html" => false, "header" => "" );
+		$extraparams = array( "html" => false, "header" => "", "footer" => "" );
+
+		$headerText = "";
+		$footerText = "";
 
 		$output = "";
 
@@ -436,37 +439,20 @@ class BioDB {
 				$extraparams = self::getExtraTableParams( $args );
 
 				if ( ! empty( $extraparams["header"] ) ) {
-					$headerTitle = Title::newFromText( $extraparams["header"] );
-					if ( $headerTitle->exists() ) {
-						$headerPage = WikiPage::factory( $headerTitle );
-						$headerContent = $headerPage->getContent( Revision::RAW );
 
-						// Get text from template
-						$headerText = ContentHandler::getContentText( $headerContent );
-						$headerText = str_replace( "<includeonly>", "", $headerText );
-						$headerText = str_replace( "</includeonly>", "", $headerText );
+					$headerText = self::processTemplate( $extraparams["header"] );
+				}
 
-						if ( ! empty( $headerText ) ) {
-							$extraparams["header"] = $headerText;
-						}
-					}
+				if ( ! empty( $extraparams["footer"] ) ) {
+
+					$footerText = self::processTemplate( $extraparams["footer"] );
 
 				}
 			}
 
-			$template = trim( $frame->expand( $args[0] ) );
-			$templateTitle = Title::newFromText( $template );
+			$templateText = self::processTemplate( trim( $frame->expand( $args[0] ) ) );
 
-			if ( $templateTitle->exists() ) {
-
-				$templatePage = WikiPage::factory( $templateTitle );
-				$templateContent = $templatePage->getContent( Revision::RAW );
-
-				// Get text from template
-				$templateText = ContentHandler::getContentText( $templateContent );
-
-				$templateText = str_replace( "<includeonly>", "", $templateText );
-				$templateText = str_replace( "</includeonly>", "", $templateText );
+			if ( ! empty( $templateText ) ) {
 
 				// get the variables used in this expression, get the number
 				// of values for each, and loop through
@@ -515,7 +501,7 @@ class BioDB {
 
 		}
 
-		$output = $extraparams["header"].$output;
+		$output = $headerText.$output.$footerText;
 
 		if ( $extraparams["html"] ) {
 
@@ -524,8 +510,32 @@ class BioDB {
 		} else {
 
 			return $parser->insertStripItem( $output, $parser->mStripState );
-			
+
 		}
+
+	}
+
+	/**
+	 * Process template
+	 */
+
+	private static function processTemplate( $param ) {
+
+		$text = "";
+
+		$title = Title::newFromText( $param );
+		if ( $title->exists() ) {
+			$page = WikiPage::factory( $title );
+			$content = $page->getContent( Revision::RAW );
+
+			// Get text from template
+			$text = ContentHandler::getContentText( $content );
+			$text = str_replace( "<includeonly>", "", $text );
+			$text = str_replace( "</includeonly>", "", $text );
+
+		}
+
+		return trim( $text );
 
 	}
 
@@ -535,7 +545,7 @@ class BioDB {
 
 	private static function getExtraTableParams( $args ) {
 
-		$extraparams = array( "html" => false, "header" => "" );
+		$extraparams = array( "html" => false, "header" => "", "footer" => "" );
 
 		foreach ( $args as $arg ) {
 
@@ -549,7 +559,16 @@ class BioDB {
 
 				if ( preg_match('/^([^=]*?)\s*=\s*(.*)$/', $arg, $m ) ) {
 					if ( count( $m ) > 1 ) {
-						$extraparams["html"] = $m[2];
+						$extraparams["header"] = $m[2];
+					}
+				}
+			}
+
+			if ( strpos( $arg, 'footer' ) === 0) {
+
+				if ( preg_match('/^([^=]*?)\s*=\s*(.*)$/', $arg, $m ) ) {
+					if ( count( $m ) > 1 ) {
+						$extraparams["footer"] = $m[2];
 					}
 				}
 			}
