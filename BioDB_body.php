@@ -1,5 +1,5 @@
 <?php
-if (!defined('MEDIAWIKI')) { die(-1); } 
+if (!defined('MEDIAWIKI')) { die(-1); }
 
 
 class BioDB {
@@ -15,57 +15,57 @@ class BioDB {
 			$set = trim( $frame->expand( $args[0] ) );
 
 			$source = null; # Let's allow null source
-			
+
 			if ( isset( $args[1])  && !empty( $args[1] ) ) {
 				$source = trim( $frame->expand( $args[1] ) );
-				
+
 			}
-		
+
 			self::callBioDB( $set, $source, $wgBioDBValues );
 			//var_dump( $wgBioDBValues );
 		}
 
 		return;
 	}
-	
-	
+
+
 	public static function returnBioDB( $set, $source ) {
-		
+
 		global $wgBioDBValues;
 		self::callBioDB( $set, $source, $wgBioDBValues );
-		
+
 		// Let's return actual values
 		return $wgBioDBValues;
-		
+
 	}
 
-	
+
 	public static function callBioDB( $set, $source, &$wgBioDBValues ) {
 
 		global $wgBioDB;
 		global $wgBioDBExpose; // Take the configuration
 		global $wgBioDBmultiple;
-	
+
 		$vars = null;
-		
+
 		if ( $source ) {
 			$vars = explode( ",", $source );
 		}
-		
+
 		if ( array_key_exists( $set, $wgBioDBExpose ) ) {
-			
+
 			// Specific DB
 			if ( $wgBioDBmultiple ) {
-				
+
 				// Assume multiple and sets to be based on db:set syntax
 				$partsDB = explode( ":", $set, 2 );
-				
+
 				$dbkey = null;
-				
-				if ( count( $partsDB == 2 ) ) { 
+
+				if ( count( $partsDB == 2 ) ) {
 					$dbkey = $partsDB[0];
 				}
-				
+
 				$dbtype = $wgBioDB[$dbkey]["type"];
 				$dbserver = $wgBioDB[$dbkey]["server"];
 				$dbuser = $wgBioDB[$dbkey]["username"];
@@ -73,7 +73,7 @@ class BioDB {
 				$dbname = $wgBioDB[$dbkey]["name"];
 				$dbflags = $wgBioDB[$dbkey]["flags"];
 				$dbtablePrefix = $wgBioDB[$dbkey]["tableprefix"];
-				
+
 			} else {
 				$dbtype = $wgBioDB["type"];
 				$dbserver = $wgBioDB["server"];
@@ -83,7 +83,7 @@ class BioDB {
 				$dbflags = $wgBioDB["flags"];
 				$dbtablePrefix = $wgBioDB["tableprefix"];
 			}
-			
+
 			if ( array_key_exists( "db", $wgBioDBExpose[$set] ) ) {
 
 				if ( array_key_exists( "type", $wgBioDBExpose[$set]["db"] ) ) {
@@ -107,9 +107,9 @@ class BioDB {
 				if ( array_key_exists( "tableprefix", $wgBioDBExpose[$set]["db"] ) ) {
 					$dbtablePrefix = $wgBioDBExpose[$set]["db"]["tableprefix"];
 				}
-				
+
 			}
-			
+
 			// Database definition
 			$db = DatabaseBase::factory( $dbtype,
 					array(
@@ -124,35 +124,35 @@ class BioDB {
 					'tablePrefix' => $dbtablePrefix,
 					)
 			);
-			
+
 			if ( array_key_exists( "query", $wgBioDBExpose[$set] ) ) {
 				$query = $wgBioDBExpose[$set]["query"];
 
 				$query = self::process_query( $query, $vars );
-				
+
 				self::query_store_DB( $db, $query, $set, $wgBioDBValues );
 				//var_dump( $wgBioDBValues );
 			}
 		}
 
-	
+
 	}
 
 	private static function process_query( $query, $vars ) {
 
 		$iter = 1;
-		
+
 		if ( $vars ) {
 
 			foreach ( $vars as $var ) {
-	
+
 				$subst = "#P".$iter;
 				$query = str_replace( $subst, $var, $query );
-	
+
 				$iter++;
-	
+
 			}
-		
+
 		}
 
 		return $query;
@@ -178,7 +178,7 @@ class BioDB {
 					}
 					array_push( $wgBioDBValues, $object );
 				}
-			} 
+			}
 		}
 
 		return true;
@@ -186,11 +186,11 @@ class BioDB {
 
 
 	private static function removeNull ( $value ) {
-	
+
 		if ($value == "NULL" || $value === null ) {
 			$value = "";
 		}
-		
+
 		// Let's strip tags -> TODO: Check if actually it's the case that not
 		$value = strip_tags( $value );
 		return($value);
@@ -311,7 +311,7 @@ class BioDB {
 			return '';
 		}
 	}
- 
+
 	/**
 	 * Render the #for_external_table parser function
 	 */
@@ -326,7 +326,7 @@ class BioDB {
 			$expression = trim( $frame->expand( $args[0] ) );
 
 			// get the variables used in this expression, get the number
-			// of values for each, and loop through 
+			// of values for each, and loop through
 			$matches = array();
 			preg_match_all( '/{{{([^}]*)}}}/', $expression, $matches );
 			$variables = $matches[1];
@@ -347,20 +347,20 @@ class BioDB {
 
 					$value = self::getIndexedValue( $variable , $i );
 					$listpar = explode("@", $prevariable);
-					
+
 					$prefix = "";
-					
+
 					$template = "";
-					
+
 					$scientific = 0;
 
 					if ( count( $listpar ) > 1) {
-							
+
 						for($k=1; $k<count($listpar); $k=$k+1) {
-								
+
 							$extra = trim($listpar[$k]);
 							$extrav = explode('=', $extra, 2);
-							
+
 							if (trim($extrav[0]) == 'prefix') {
 								$prefix = trim($extrav[1]);
 							}
@@ -372,42 +372,42 @@ class BioDB {
 							}
 						}
 					}
-			
-					// Handling null values	
+
+					// Handling null values
 					$value = self::removeNull($value);
-	
+
 					if ( !empty( $template ) ) {
 						$templatevar = "{{".$template."|".$value."}}";
 						$value = trim( $parser->recursivePreprocess( $templatevar ) );
 					}
-					
+
 					// Add Prefix if available
 					if ( !empty ( $prefix) ) {
 							$value = $prefix.":".$value;
 					}
-					
+
 					if ( $scientific > 0 ) {
 						$value = (float) $value;
-						if ( $value < 1 ) { 
+						if ( $value < 1 ) {
 							$numDecimals = self::numberOfDecimals( $value );
-						
+
 							if ( $numDecimals >= $scientific ) {
 								$value = self::scientificNotation( $value );
 							}
 						}
 					}
-					
+
 					$cur_expression = str_replace( '{{{' . $prevariable . '}}}', $value, $cur_expression );
 
 					if ( !empty( $value ) ) {
 						$allempty = false;
 					}
-				
+
 				}
 
 				// Fix if empty value -> This way we avoid to clear so often
 				if ( ! $allempty ) {
-					
+
 					$output .= $cur_expression; //TODO: We should parse further here!
 				}
 			}
@@ -416,110 +416,176 @@ class BioDB {
 
 		return $output;
 	}
-	
-	
+
+
 	/**
 	 * Render straight from a template to a row
 	 */
 	public static function doForExternalTableTemplate( $parser, $frame, $args ) {
 
 		global $wgBioDBValues;
-		
+
+		$extraparams = array( "html" => false, "header" => "" );
+
 		$output = "";
 
 		if ( isset( $args[0])  && !empty( $args[0] ) ) {
 
-			$template = trim( $frame->expand( $args[0] ) );
+			if ( count( $args ) > 1 ) {
+				array_shift( $args );
+				$extraparams = self::getExtraTableParams( $args );
 
+				if ( ! empty( $extraparams["header"] ) ) {
+					$headerTitle = Title::newFromText( $extraparams["header"] );
+					if ( $headerTitle->exists() ) {
+						$headerPage = WikiPage::factory( $headerTitle );
+						$headerContent = $headerPage->getContent( Revision::RAW );
+
+						// Get text from template
+						$headerText = ContentHandler::getContentText( $headerContent );
+						$headerText = str_replace( "<includeonly>", "", $headerText );
+						$headerText = str_replace( "</includeonly>", "", $headerText );
+
+						if ( ! empty( $headerText ) ) {
+							$extraparams["header"] = $headerText;
+						}
+					}
+
+				}
+			}
+
+			$template = trim( $frame->expand( $args[0] ) );
 			$templateTitle = Title::newFromText( $template );
-			
+
 			if ( $templateTitle->exists() ) {
-			
+
 				$templatePage = WikiPage::factory( $templateTitle );
 				$templateContent = $templatePage->getContent( Revision::RAW );
-				
+
 				// Get text from template
 				$templateText = ContentHandler::getContentText( $templateContent );
-				
+
 				$templateText = str_replace( "<includeonly>", "", $templateText );
 				$templateText = str_replace( "</includeonly>", "", $templateText );
 
 				// get the variables used in this expression, get the number
-				// of values for each, and loop through 
+				// of values for each, and loop through
 				$matches = array();
 				preg_match_all( '/{{{([^}]*)}}}/', $templateText, $matches );
 				$variables = $matches[1];
-								
-				$structValues = self::assignTemplateValues( $variables ); 
+
+				$structValues = self::assignTemplateValues( $variables );
 				$variables = $structValues[0];
 				$defaultValues = $structValues[1];
 				$fullValues = $structValues[2];
-				
+
 				// Parsing rows
 				$num_loops = 0;
 				$num_loops = max( $num_loops, count( $wgBioDBValues ) );
 				// var_dump( $wgBioDBValues );
-	
+
 				$preOutput = "";
-	
+
 				for ( $i = 0; $i < $num_loops; $i++ ) {
-	
+
 					$templateBit = $templateText;
-	
+
 					foreach ( $variables as $variable ) {
-	
+
 						$value = self::getIndexedValue( $variable , $i );
-						// Handling null values	
+						// Handling null values
 						$value = self::removeNull($value);
-						
+
 						if ( empty( $value ) ) {
 							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $defaultValues[$variable], $templateBit );
-						} else {						
+						} else {
 							$templateBit = str_replace( '{{{' . $fullValues[$variable] . '}}}', $value, $templateBit );
 						}
 					}
-					
-						
+
+
 					$preOutput .= $templateBit; // Adding output
 				}
-				
+
 				// Process all preOutput for any additional parser function
-				
+
 				$output = $parser->recursivePreprocess( $preOutput );
-				
+
 			}
 
 		}
 
-		return $parser->insertStripItem( $output, $parser->mStripState );
+		$output = $extraparams["header"].$output;
+
+		if ( $extraparams["html"] ) {
+
+			return [ $output, 'noparse' => true, 'isHTML' => true ];
+
+		} else {
+
+			return $parser->insertStripItem( $output, $parser->mStripState );
+			
+		}
+
 	}
-	
+
+	/**
+	 * Process extra params
+	 */
+
+	private static function getExtraTableParams( $args ) {
+
+		$extraparams = array( "html" => false, "header" => "" );
+
+		foreach ( $args as $arg ) {
+
+			$arg = trim( $arg );
+
+			if ( strpos( $arg, 'html' ) === 0) {
+				$extraparams["html"] = true;
+			}
+
+			if ( strpos( $arg, 'header' ) === 0) {
+
+				if ( preg_match('/^([^=]*?)\s*=\s*(.*)$/', $arg, $m ) ) {
+					if ( count( $m ) > 1 ) {
+						$extraparams["html"] = $m[2];
+					}
+				}
+			}
+
+		}
+
+		return $extraparams;
+
+	}
+
 	/**
 	 * Process template values in detail
 	 */
-	
+
 	private static function assignTemplateValues( $variables ) {
-		
+
 		$values = array();
 		$defaultValues = array();
 		$fullValues = array();
 		$defaultVal = "";
-		
+
 		foreach ( $variables as $variable ) {
-			
+
 			$parts = explode( "|", $variable );
 			if ( count( $parts ) > 1 ) {
 				$defaultValues[$parts[0]] = $parts[1];
 			} else {
 				$defaultValues[$parts[0]] = $defaultVal;
 			}
-			
+
 			array_push( $values, $parts[0] );
 			$fullValues[$parts[0]] = $variable;
 		}
-		
+
 		return( array( $values, $defaultValues, $fullValues ) );
-		
+
 	}
 
 
@@ -543,12 +609,12 @@ class BioDB {
 		$expression = implode( '|', $params ); // Let's put all params together
 
 		// get the variables used in this expression, get the number
-		// of values for each, and loop through 
+		// of values for each, and loop through
 		$matches = array();
 		preg_match_all( '/{{{([^}]*)}}}/', $expression, $matches );
 		$variables = $matches[1];
 		$num_loops = 0;
-		
+
 		$customProps = self::assign_custom_props( array_slice( $params, 1 ) );
 
 		$num_loops = max( $num_loops, count( $wgBioDBValues ) );
@@ -565,18 +631,18 @@ class BioDB {
 				$variable = preg_replace('/@\w+\s*=\s*\w+\s*/','', $variable);
 				$value = self::getIndexedValue( $variable , $i );
 				$listpar = explode("@", $prevariable);
-				
+
 				$prefix = "";
 
 				$template = "";
 
 				if ( count( $listpar ) > 1) {
-						
+
 					for($k=1; $k<count($listpar); $k=$k+1) {
-							
+
 						$extra = trim($listpar[$k]);
 						$extrav = explode('=', $extra, 2);
-						
+
 						if (trim($extrav[0]) == 'prefix') {
 							$prefix = trim($extrav[1]);
 						}
@@ -586,7 +652,7 @@ class BioDB {
 
 					}
 				}
-				
+
 				if ( !empty( $template ) ) {
 					if ( $value != '' ) {
 						$templatevar = "{{".$template."|".$value."}}";
@@ -598,7 +664,7 @@ class BioDB {
 				if ( !empty ( $prefix) ) {
 						$value = $prefix.":".$value;
 				}
-				
+
 
 				// TODO: We should parse further value here
 
@@ -606,7 +672,7 @@ class BioDB {
 				$partsvar = explode( ".", $listpar[0], 2 ); // We got the one without @
 
 				if ( count( $partsvar ) == 2 ) {
-					
+
 					if ( ! empty( $value ) ) {
 						if ( array_key_exists( $partsvar[0].".".$partsvar[1], $customProps ) ) {
 							$internal[ $customProps[ $partsvar[0].".".$partsvar[1]] ] = $value;
@@ -619,19 +685,19 @@ class BioDB {
 						}
 					}
 				}
-				
+
 			}
 
 			// If no keys, skip
 			if ( count( $internal ) == 0 ) {
 				continue;
 			}
-			
+
 			// We add external to internal. Makes no sense if only external
 			$internal = array_merge( $internal, $external );
 
 			if ( empty( $params[0] ) ) {
-				
+
 				// Submitting to Object
 				if ( $smwgDefaultStore == 'SMWSQLStore3' ) {
 					self::callObject( $parser, $internal );
@@ -687,7 +753,7 @@ class BioDB {
 		$expression = implode( '|', $params ); // Let's put all params together
 
 		$num_loops = 0;
-		
+
 		$customProps = self::assign_custom_props_all( array_slice( $params, 1 ) );
 
 		$num_loops = max( $num_loops, count( $wgBioDBValues ) );
@@ -702,7 +768,7 @@ class BioDB {
 			}
 
 			if ( empty( $params[0] ) ) {
-				
+
 				// Submitting to Object
 				if ( $smwgDefaultStore == 'SMWSQLStore3' ) {
 					self::callObject( $parser, $internal );
@@ -744,14 +810,14 @@ class BioDB {
 		$internal = array();
 
 		// get the variables used in this expression, get the number
-		// of values for each, and loop through 
+		// of values for each, and loop through
 		$matches = array();
 		$expression = implode( '|', array_keys( $props ) ); // Let's put all params together
 		preg_match_all( '/{{{([^}]*)}}}/', $expression, $matches );
 		$variables = $matches[1];
 
 		foreach ( $props as $key => $val ) {
-		
+
 			foreach ( $variables as $variable ) {
 				$key = str_replace( $variable, $values[$variable], $key );
 				$key = str_replace( "{{{", "", $key );
@@ -844,33 +910,33 @@ class BioDB {
 
 		if ( class_exists( 'SMW\ParserData' ) ) {
 			// SMW 1.9+
-			
+
 			$parserData = new \SMW\ParserData( $parser->getTitle(), $parser->getOutput() );
 			$subject = $parserData->getSubject();
-			
+
 			foreach ( $params as $property => $value) {
-			
+
 				$dataValue = \SMW\DataValueFactory::getInstance()->newPropertyValue( $property , $value, null, $subject);
 				$parserData->addDataValue( $dataValue );
 			}
-			
+
 			$parserData->updateOutput();
 		}
 		return;
 	}
-	
+
 	/**
 	 * Assign custom properties
 	 */
 	public static function assign_custom_props( $array ) {
-		
+
 		$keysProps = array();
-		
+
 		foreach ( $array as $element ) {
-			
+
 			$assign = explode( "=", $element, 2 );
 			if ( count( $assign ) == 2 ) {
-				
+
 				$prop = trim( $assign[0] );
 				$valraw = trim( $assign[1] );
 				preg_match( '/{{{([^}]*)}}}/', $valraw, $valarr );
@@ -879,7 +945,7 @@ class BioDB {
 				}
 			}
 		}
-		
+
 		return $keysProps;
 	}
 
@@ -887,20 +953,20 @@ class BioDB {
 	 * Assign custom properties
 	 */
 	public static function assign_custom_props_all( $array ) {
-		
+
 		$keysProps = array();
-		
+
 		foreach ( $array as $element ) {
-			
+
 			$assign = explode( "=", $element, 2 );
 			if ( count( $assign ) == 2 ) {
-				
+
 				$prop = trim( $assign[0] );
 				$valraw = trim( $assign[1] );
 				$keysProps[ $valraw ] = $prop;
 			}
 		}
-		
+
 		return $keysProps;
 	}
 
@@ -920,7 +986,7 @@ class BioDB {
 			// throw new Exception('numberOfDecimals: ' . $value . ' is not a number!');
 			return false;
 		}
-		
+
 		return strlen($value) - strrpos($value, '.') - 1;
 	}
 

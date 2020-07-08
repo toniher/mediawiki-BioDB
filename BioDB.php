@@ -12,33 +12,33 @@ call_user_func( function() {
 			'path' => __FILE__,     // Magic so that svn revision number can be shown
 			'name' => "BioDB",
 			'description' => "Retrieve information from an existing Biological Database",
-			'version' => '0.5.0', 
+			'version' => '0.6.0', 
 			'author' => array("Toniher", "Yaron Koren", "et al."),
 			'url' => "https://www.mediawiki.org/wiki/User:Toniher",
 	);
-	
+
 	# Define a setup function
 	$GLOBALS['wgHooks']['ParserFirstCallInit'][] = 'wfBioDBParserFunction_Setup';
 	# Add a hook to initialise the magic word
 	$GLOBALS['wgHooks']['LanguageGetMagic'][]       = 'wfBioDBParserFunction_Magic';
-	
-	
+
+
 	# A var to ease the referencing of files
 	$dir = dirname(__FILE__) . '/';
 	$GLOBALS['wgAutoloadClasses']['BioDB'] = $dir . 'BioDB_body.php';
-	
+
 	# Store values
 	# All these parameters should be in LocalSettings.php
-	
+
 	$GLOBALS['wgBioDBValues'] = array();
-	
+
 	// We assume MySQL in the future it migth be other options
-	
+
 	global $wgDBserver;
 	global $wgDBname;
 	global $wgDBuser;
 	global $wgDBpassword;
-	
+
 	$GLOBALS['wgBioDB'] = array(
 		"server" => $wgDBserver,
 		"type" => "mysql",
@@ -48,13 +48,13 @@ call_user_func( function() {
 		"flags" => "",
 		"tableprefix" => ""
 	);
-	
+
 	// Alternative, different default DBs
 	$GLOBALS["wgBioDBmultiple"] = false; // Default false
-	
+
 	/**
 	 * Multiple DB if necessary
-	 * 
+	 *
 	$GLOBALS['wgBioDB'] = array(
 		"main": array(
 			"server" => "first",
@@ -75,16 +75,16 @@ call_user_func( function() {
 			"tableprefix" => ""
 		)
 	);
-	
+
 	**/
-	
+
 	// Exposed info to wiki
 	// Queried as {{#BioDB_value:goinfo|param}}
 	// Use query automatically
 	// TODO: Expose should allow different DB interfaces (not only mysql), now only one!
 	// TODO: Pending prop map. Define properties somewhere else
 	// Example table from: http://greenc.sciencedesigners.com
-	
+
 	$GLOBALS['wgBioDBExpose'] = array(
 		"gene" => array(
 			"db" => array(
@@ -94,7 +94,7 @@ call_user_func( function() {
 				"username" => "myuser",
 				"password" => "mypasswd",
 				"flags" => "",
-				"tableprefix" => ""	
+				"tableprefix" => ""
 			),
 			"query" => "SELECT distinct(c.gene_alias) AS gene_alias
 				, n.gene_name AS gene_name
@@ -165,6 +165,3 @@ function wfBioDBParserFunction_Magic( &$magicWords, $langCode ) {
 	# unless we return true, other parser functions extensions won't get loaded.
 	return true;
 }
-
-
-
