@@ -1,0 +1,49 @@
+{
+	"name": "BioDB",
+	"version": "1.0.0",
+	"author": [
+		"Toniher",
+		"Yaron Koren",
+		"et al."
+	],
+	"url": "https://www.mediawiki.org/wiki/User:Toniher",
+	"descriptionmsg": "biodb-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">= 1.43.0"
+	},
+	"AutoloadClasses": {
+		"BioDB": "BioDB_body.php",
+		"ApiBioDB": "BioDB.api.php"
+	},
+	"AutoloadFunctions": {
+		"wfBioDBParserFunction_Setup": "BioDB.php"
+	},
+	"APIModules": {
+		"BioDB": {
+			"class": "ApiBioDB"
+		}
+	},
+	"Hooks": {
+		"ParserFirstCallInit": "wfBioDBParserFunction_Setup"
+	},
+	"config": {
+		"BioDBValues": {
+			"value": []
+		},
+		"BioDBmultiple": {
+			"value": false
+		},
+		"BioDB": {
+			"value": {}
+		},
+		"BioDBExpose": {
+			"value": {}
+		},
+		"BioDBApi": {
+			"value": true
+		}
+	},
+	"manifest_version": 2
+}

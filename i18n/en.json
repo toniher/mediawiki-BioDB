@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"biodb-desc": "Retrieve information from an existing Biological Database",
+	"apihelp-biodb-summary": "API for BioDB queries",
+	"apihelp-biodb-param-query": "Query name to retrieve, as defined in $wgBioDBExpose configuration",
+	"apihelp-biodb-param-param": "Parameter(s) to pass to the query",
+	"apihelp-biodb-param-table": "Return results in table (row/column) format",
+	"apihelp-biodb-param-fileformat": "In table output, download as this file format (e.g. csv)",
+	"apihelp-biodb-param-sep": "Column separator when using csv fileformat (default: tab)",
+	"apihelp-biodb-param-typesolve": "Automatically cast numeric values to int or float"
+}
