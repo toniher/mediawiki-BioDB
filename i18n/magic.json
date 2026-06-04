@@ -9,8 +9,6 @@
 		"BioDB_exists": ["0", "BioDB_exists"],
 		"BioDB_table": ["0", "BioDB_table"],
 		"BioDB_table_template": ["0", "BioDB_table_template"],
-		"BioDB_store_table": ["0", "BioDB_store_table"],
-		"BioDB_fstore_table": ["0", "BioDB_fstore_table"],
 		"BioDB_clear": ["0", "BioDB_clear"]
 	}
 }

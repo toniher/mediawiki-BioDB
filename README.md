@@ -9,7 +9,6 @@ Used in Biological Database projects. Based on the
 
 - MediaWiki >= 1.43
 - PHP >= 7.4
-- Semantic MediaWiki >= 3.0 (optional — only needed for `#BioDB_store_table` and `#BioDB_fstore_table`)
 
 ## Installation
 
@@ -52,12 +51,6 @@ Used in Biological Database projects. Based on the
            'query' => "SELECT gene_alias, gene_name, chromosome
                        FROM coordinates
                        WHERE gene_alias = '#P1'",
-           // Map column names to Semantic MediaWiki property names (optional)
-           'propmap' => [
-               'gene_alias' => 'Has Alias',
-               'gene_name'  => 'Has Name',
-               'chromosome' => 'Is in Chromosome',
-           ],
            // Restrict API access to these user groups (omit to allow all)
            'api' => ['sysop'],
        ],
@@ -174,29 +167,6 @@ Supports modifiers after `@` in the placeholder name:
 Fetches `TemplateName` from the wiki, fills its `{{{field|default}}}` parameters
 from each loaded row, then concatenates the results. Optional `header=` and
 `footer=` templates wrap the output. Pass `html` to emit raw HTML.
-
----
-
-### `#BioDB_store_table` — store results as SMW subobjects
-
-```
-{{#BioDB_store_table: MainProperty | CustomProp={{{set.col}}} | … }}
-```
-
-Requires Semantic MediaWiki. For each loaded row, creates an SMW subobject
-with properties derived from `$wgBioDBExpose[set][propmap]` or from explicit
-`CustomProp={{{set.col}}}` mappings.
-
----
-
-### `#BioDB_fstore_table` — flexible SMW storage
-
-```
-{{#BioDB_fstore_table: MainProperty | {{{set.col}}}=SMW Property | … }}
-```
-
-Like `#BioDB_store_table` but uses the left-hand side of each assignment as the
-key expression (supports `{{{…}}}` placeholders within the key itself).
 
 ---
 

@@ -30,7 +30,5 @@ function wfBioDBParserFunction_Setup( Parser $parser ) {
 	$parser->setFunctionHook( 'BioDB_exists', [ BioDB::class, 'doExistsValue' ], SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_table', [ BioDB::class, 'doForExternalTable' ], SFH_OBJECT_ARGS );
 	$parser->setFunctionHook( 'BioDB_table_template', [ BioDB::class, 'doForExternalTableTemplate' ], SFH_OBJECT_ARGS );
-	$parser->setFunctionHook( 'BioDB_store_table', [ BioDB::class, 'doStoreExternalTable' ] );
-	$parser->setFunctionHook( 'BioDB_fstore_table', [ BioDB::class, 'doFlexStoreExternalTable' ] );
 	$parser->setFunctionHook( 'BioDB_clear', [ BioDB::class, 'doClearExternalData' ] );
 }

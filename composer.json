@@ -4,8 +4,6 @@
 	"description": "Retrieve information from an existing Biological Database",
 	"keywords": [
 		"MediaWiki",
-		"SMW",
-		"Semantic MediaWiki",
 		"Database"
 	],
 	"homepage": "",
@@ -18,8 +16,7 @@
 	],
 	"require": {
 		"php": ">=7.4.0",
-		"composer/installers": "1.*,>=1.0.1",
-		"mediawiki/semantic-media-wiki": ">=2.0"
+		"composer/installers": "1.*,>=1.0.1"
 	},
 	"autoload": {
 		"files": ["BioDB.php", "BioDB_body.php"],

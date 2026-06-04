@@ -1,0 +1,40 @@
+# Claude local config (not for VCS)
+CLAUDE.local.md
+# To assess if we remove it
+CLAUDE.md
+.claude/
+
+# Composer (if ever introduced)
+/vendor/
+composer.lock
+composer.phar
+
+# Node tooling (jshint etc.)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# PHP runtime
+*.log
+*.cache
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.buildpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local env / secrets
+.env
+.env.local
+*.local.php
+LocalSettings.php
