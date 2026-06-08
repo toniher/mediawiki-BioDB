@@ -5,7 +5,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 /**
  * ParserFirstCallInit hook handler.
- * Magic words are registered via i18n/magic.json.
+ * Magic words are registered via BioDB.i18n.magic.php.
  * Extension metadata and class autoloading are declared in extension.json.
  *
  * In LocalSettings.php, configure the extension before wfLoadExtension():

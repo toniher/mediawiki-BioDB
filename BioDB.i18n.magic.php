@@ -1,0 +1,16 @@
+<?php
+/**
+ * Magic word aliases for the BioDB extension parser functions.
+ */
+
+$magicWords = [];
+
+$magicWords['en'] = [
+	'BioDB'                => [ 0, 'BioDB' ],
+	'BioDB_value'          => [ 0, 'BioDB_value' ],
+	'BioDB_count'          => [ 0, 'BioDB_count' ],
+	'BioDB_exists'         => [ 0, 'BioDB_exists' ],
+	'BioDB_table'          => [ 0, 'BioDB_table' ],
+	'BioDB_table_template' => [ 0, 'BioDB_table_template' ],
+	'BioDB_clear'          => [ 0, 'BioDB_clear' ],
+];

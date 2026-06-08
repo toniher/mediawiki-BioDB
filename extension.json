@@ -23,7 +23,7 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
-		"BioDBMagic": "i18n/magic.json"
+		"BioDBMagic": "BioDB.i18n.magic.php"
 	},
 	"AutoloadFunctions": {
 		"wfBioDBParserFunction_Setup": "BioDB.php"
