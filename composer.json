@@ -18,6 +18,9 @@
 		"php": ">=7.4.0",
 		"composer/installers": "1.*,>=1.0.1"
 	},
+	"extra": {
+		"installer-name": "BioDB"
+	},
 	"autoload": {
 		"files": ["BioDB.php", "BioDB_body.php"],
 		"classmap": ["BioDB_body.php"]

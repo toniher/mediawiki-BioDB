@@ -17,6 +17,14 @@
 		"BioDB": "BioDB_body.php",
 		"ApiBioDB": "BioDB.api.php"
 	},
+	"MessagesDirs": {
+		"BioDB": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"BioDBMagic": "i18n/magic.json"
+	},
 	"AutoloadFunctions": {
 		"wfBioDBParserFunction_Setup": "BioDB.php"
 	},
