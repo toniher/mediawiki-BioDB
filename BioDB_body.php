@@ -200,6 +200,26 @@ class BioDB
 
         $sqlVerb = strtoupper( strtok( trim( $query ), " \t\n\r" ) );
 
+        // Diagnostics: capture connection state and the exact query/verb.
+        $isOpen = is_object( $db ) && method_exists( $db, 'isOpen' ) ? $db->isOpen() : null;
+        wfDebugLog(
+            'BioDB',
+            'query_store_DB: class=' . ( is_object( $db ) ? get_class( $db ) : gettype( $db ) )
+            . ' | isOpen=' . var_export( $isOpen, true )
+            . ' | verb=' . $sqlVerb
+            . ' | query=' . $query
+        );
+
+        // If the handle was dropped/closed, try to (re)establish it before querying.
+        if ( $isOpen === false && method_exists( $db, 'ping' ) ) {
+            try {
+                $db->ping();
+                wfDebugLog( 'BioDB', 'query_store_DB: ping() after closed handle, isOpen now=' . var_export( $db->isOpen(), true ) );
+            } catch ( \Throwable $pe ) {
+                wfDebugLog( 'BioDB', 'query_store_DB: ping() failed: ' . get_class( $pe ) . ': ' . $pe->getMessage() );
+            }
+        }
+
         try {
             $result = $db->query(
                 new \Wikimedia\Rdbms\Query( $query, 0, $sqlVerb ),
