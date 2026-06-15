@@ -167,7 +167,11 @@ class BioDB
     private static function query_store_DB($db, $query, $set, &$wgBioDBValues)
     {
 
-        $result = $db->query( new \Wikimedia\Rdbms\Query( $query ), 'BioDB::query_store_DB' );
+        $sqlVerb = strtoupper( strtok( trim( $query ), " \t\n\r" ) );
+        $result = $db->query(
+            new \Wikimedia\Rdbms\Query( $query, \Wikimedia\Rdbms\ISQLPlatform::QUERY_CHANGE_NONE, $sqlVerb ),
+            'BioDB::query_store_DB'
+        );
 
         if ($result) {
 
