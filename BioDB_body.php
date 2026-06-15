@@ -169,7 +169,7 @@ class BioDB
 
         $sqlVerb = strtoupper( strtok( trim( $query ), " \t\n\r" ) );
         $result = $db->query(
-            new \Wikimedia\Rdbms\Query( $query, \Wikimedia\Rdbms\ISQLPlatform::QUERY_CHANGE_NONE, $sqlVerb ),
+            new \Wikimedia\Rdbms\Query( $query, 0, $sqlVerb ),
             'BioDB::query_store_DB'
         );
 
