@@ -89,28 +89,20 @@ class ApiBioDB extends ApiBase
             if ($table && $format == 'csv') {
 
                 // TODO: Fix this ugly solution
-                if ($sep) {
-                    $csvstr = implode($sep, $cols) . "\n";
-                } else {
-                    $csvstr = implode("\t", $cols) . "\n";
-                }
-
+                $delimiter = $sep ?: "\t";
+                $csvLines = [ implode( $delimiter, $cols ) ];
                 foreach ($data as $row) {
-
-                    if ($sep) {
-                        $csvstr = $csvstr . implode($sep, $row) . "\n";
-                    } else {
-                        $csvstr = $csvstr . implode("\t", $row) . "\n";
-                    }
-
+                    $csvLines[] = implode( $delimiter, $row );
                 }
+                $csvstr = implode( "\n", $csvLines ) . "\n";
 
-                header("Content-Type: application/csv");
-                header("Content-Disposition: attachment; filename=" . $params["query"] . ".csv");
-                header("Pragma: no-cache");
-                header("Expires: 0");
-                echo $csvstr;
-                exit;
+                $response = $this->getRequest()->response();
+                $response->header( "Content-Type: text/csv; charset=utf-8" );
+                $response->header( "Content-Disposition: attachment; filename=" . $params["query"] . ".csv" );
+                $response->header( "Pragma: no-cache" );
+                $response->header( "Expires: 0" );
+                print $csvstr;
+                die();
 
             } else {
 
@@ -137,7 +129,9 @@ class ApiBioDB extends ApiBase
 
             $apiGroups = $wgBioDBExpose[$query]["api"];
 
-            $groups = $this->getUser()->getGroups();
+            $groups = \MediaWiki\MediaWikiServices::getInstance()
+                ->getUserGroupManager()
+                ->getUserGroups( $this->getUser() );
 
             if (in_array("*", $apiGroups)) {
                 $APIallow = true;

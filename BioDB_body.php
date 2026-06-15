@@ -68,7 +68,7 @@ class BioDB
 
                 $dbkey = null;
 
-                if (count($partsDB == 2)) {
+                if (count($partsDB) == 2) {
                     $dbkey = $partsDB[0];
                 }
 
@@ -167,7 +167,7 @@ class BioDB
     private static function query_store_DB($db, $query, $set, &$wgBioDBValues)
     {
 
-        $result = $db->query($query, 'BioDB::query_store_DB');
+        $result = $db->query( new \Wikimedia\Rdbms\Query( $query ), 'BioDB::query_store_DB' );
 
         if ($result) {
 
