@@ -137,6 +137,9 @@ class BioDB
             }
 
             // Database definition — uses DatabaseFactory service (MW 1.39+)
+            // NB: flags belong INSIDE the params array. The 3rd positional arg
+            // is $connect (NEW_CONNECTED/NEW_UNCONNECTED), not flags — leaving it
+            // to default ensures the connection is actually opened.
             try {
                 $db = \MediaWiki\MediaWikiServices::getInstance()->getDatabaseFactory()->create(
                     $dbtype,
@@ -146,8 +149,8 @@ class BioDB
                         'password'    => $dbpassword,
                         'dbname'      => $dbname,
                         'tablePrefix' => $dbtablePrefix,
-                    ],
-                    (int)$dbflags
+                        'flags'       => $dbflags,
+                    ]
                 );
             } catch ( \Throwable $e ) {
                 // Surface the real underlying error during debugging.
