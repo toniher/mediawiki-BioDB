@@ -90,6 +90,16 @@ class BioDB
                 $dbtablePrefix = $wgBioDB["tableprefix"];
             }
 
+            // Skip SSL by default unless a config explicitly opts out.
+            $dbskipssl = true;
+            if ($wgBioDBmultiple) {
+                if (isset($wgBioDB[$dbkey]["skipssl"])) {
+                    $dbskipssl = (bool)$wgBioDB[$dbkey]["skipssl"];
+                }
+            } elseif (isset($wgBioDB["skipssl"])) {
+                $dbskipssl = (bool)$wgBioDB["skipssl"];
+            }
+
             if (array_key_exists("db", $wgBioDBExpose[$set])) {
 
                 if (array_key_exists("type", $wgBioDBExpose[$set]["db"])) {
@@ -113,21 +123,42 @@ class BioDB
                 if (array_key_exists("tableprefix", $wgBioDBExpose[$set]["db"])) {
                     $dbtablePrefix = $wgBioDBExpose[$set]["db"]["tableprefix"];
                 }
+                if (array_key_exists("skipssl", $wgBioDBExpose[$set]["db"])) {
+                    $dbskipssl = (bool)$wgBioDBExpose[$set]["db"]["skipssl"];
+                }
 
             }
 
+            // Strip the DBO_SSL bit so the connection is made without SSL,
+            // equivalent to the MySQL CLI's --skip-ssl option.
+            $dbflags = (int)$dbflags;
+            if ($dbskipssl) {
+                $dbflags &= ~DBO_SSL;
+            }
+
             // Database definition — uses DatabaseFactory service (MW 1.39+)
-            $db = \MediaWiki\MediaWikiServices::getInstance()->getDatabaseFactory()->create(
-                $dbtype,
-                [
-                    'host'        => $dbserver,
-                    'user'        => $dbuser,
-                    'password'    => $dbpassword,
-                    'dbname'      => $dbname,
-                    'tablePrefix' => $dbtablePrefix,
-                ],
-                (int)$dbflags
-            );
+            try {
+                $db = \MediaWiki\MediaWikiServices::getInstance()->getDatabaseFactory()->create(
+                    $dbtype,
+                    [
+                        'host'        => $dbserver,
+                        'user'        => $dbuser,
+                        'password'    => $dbpassword,
+                        'dbname'      => $dbname,
+                        'tablePrefix' => $dbtablePrefix,
+                    ],
+                    (int)$dbflags
+                );
+            } catch ( \Throwable $e ) {
+                // Surface the real underlying error during debugging.
+                throw new \RuntimeException(
+                    'BioDB connection failed: ' . get_class( $e ) . ': ' . $e->getMessage()
+                    . ' | server: ' . $dbserver . ' | dbname: ' . $dbname
+                    . ' | type: ' . $dbtype . ' | flags: ' . (int)$dbflags,
+                    0,
+                    $e
+                );
+            }
 
             if (array_key_exists("query", $wgBioDBExpose[$set])) {
                 $query = $wgBioDBExpose[$set]["query"];
