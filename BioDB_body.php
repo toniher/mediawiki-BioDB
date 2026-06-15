@@ -168,10 +168,21 @@ class BioDB
     {
 
         $sqlVerb = strtoupper( strtok( trim( $query ), " \t\n\r" ) );
-        $result = $db->query(
-            new \Wikimedia\Rdbms\Query( $query, 0, $sqlVerb ),
-            'BioDB::query_store_DB'
-        );
+
+        try {
+            $result = $db->query(
+                new \Wikimedia\Rdbms\Query( $query, 0, $sqlVerb ),
+                'BioDB::query_store_DB'
+            );
+        } catch ( \Throwable $e ) {
+            // Surface the real underlying error during debugging.
+            throw new \RuntimeException(
+                'BioDB query failed: ' . get_class( $e ) . ': ' . $e->getMessage()
+                . ' | query: ' . $query,
+                0,
+                $e
+            );
+        }
 
         if ($result) {
 
