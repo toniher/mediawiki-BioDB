@@ -77,8 +77,8 @@ class BioDB
                 $dbuser = $wgBioDB[$dbkey]["username"];
                 $dbpassword = $wgBioDB[$dbkey]["password"];
                 $dbname = $wgBioDB[$dbkey]["name"];
-                $dbflags = $wgBioDB[$dbkey]["flags"];
-                $dbtablePrefix = $wgBioDB[$dbkey]["tableprefix"];
+                $dbflags = array_key_exists("flags", $wgBioDB[$dbkey]) ? $wgBioDB[$dbkey]["flags"] : "";
+                $dbtablePrefix = array_key_exists("tableprefix", $wgBioDB[$dbkey]) ? $wgBioDB[$dbkey]["tableprefix"] : "";
 
             } else {
                 $dbtype = $wgBioDB["type"];
@@ -86,8 +86,8 @@ class BioDB
                 $dbuser = $wgBioDB["username"];
                 $dbpassword = $wgBioDB["password"];
                 $dbname = $wgBioDB["name"];
-                $dbflags = $wgBioDB["flags"];
-                $dbtablePrefix = $wgBioDB["tableprefix"];
+                $dbflags = array_key_exists("flags", $wgBioDB) ? $wgBioDB["flags"] : "";
+                $dbtablePrefix = array_key_exists("tableprefix", $wgBioDB) ? $wgBioDB["tableprefix"] : "";
             }
 
             // Skip SSL by default unless a config explicitly opts out.
