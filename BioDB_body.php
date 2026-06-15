@@ -224,10 +224,11 @@ class BioDB
         }
 
         try {
-            $result = $db->query(
-                new \Wikimedia\Rdbms\Query( $query, 0, $sqlVerb ),
-                'BioDB::query_store_DB'
-            );
+            // Pass the raw SQL string: MW 1.43's Database::query() parses the
+            // verb and assigns the correct read/write change flags itself.
+            // This avoids depending on the Query constructor signature or the
+            // QUERY_CHANGE_* constant path, both of which are internal.
+            $result = $db->query( $query, 'BioDB::query_store_DB' );
         } catch ( \Throwable $e ) {
             // Surface the real underlying error during debugging.
             throw new \RuntimeException(
