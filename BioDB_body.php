@@ -611,8 +611,10 @@ class BioDB
             $wikiPage = \MediaWiki\MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle($title);
             $content = $wikiPage->getContent(\MediaWiki\Revision\RevisionRecord::RAW);
 
-            // Get text from template
-            $text = $content !== null ? ContentHandler::getContentText($content) : '';
+            // Get text from template. ContentHandler::getContentText() was
+            // deprecated in 1.37; read the text straight off the Content
+            // object instead (template content is wikitext = TextContent).
+            $text = $content instanceof \MediaWiki\Content\TextContent ? $content->getText() : '';
             $text = str_replace("<includeonly>", "", $text);
             $text = str_replace("</includeonly>", "", $text);
 
